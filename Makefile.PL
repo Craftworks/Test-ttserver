@@ -6,7 +6,6 @@ author   q{Craftworks <craftwork at cpan org>};
 license  'perl';
 
 build_requires('Test::More');
-build_requires('Test::UseAllModules');
 build_requires('TokyoTyrant');
 
 author_tests 'xt';
