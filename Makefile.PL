@@ -5,6 +5,8 @@ all_from 'lib/Test/ttserver.pm';
 author   q{Craftworks <craftwork at cpan org>};
 license  'perl';
 
+requires('Test::TCP');
+
 build_requires('Test::More');
 build_requires('TokyoTyrant');
 

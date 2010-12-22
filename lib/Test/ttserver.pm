@@ -1,15 +1,16 @@
 package Test::ttserver;
 
-use warnings;
 use strict;
+use warnings;
 use Cwd;
 use File::Temp;
 use File::Path;
 use IO::File;
 use POSIX qw/SIGTERM WNOHANG :sys_wait_h/;
 use Time::HiRes 'sleep';
+use Test::TCP;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 $VERSION = eval $VERSION;
 
 our $errstr;
@@ -33,7 +34,7 @@ sub new {
     $self->{'bin'} = $self->_find_bin or return;
 
     if ( defined $self->{'base_dir'} && $self->{'base_dir'} !~ m{^/} ) {
-        $self->{'base_dir'} = cwd . '/' . $self->{'base_dir'}
+        $self->{'base_dir'} = getcwd . '/' . $self->{'base_dir'}
     } else {
         $self->{'base_dir'} = File::Temp::tempdir(
             CLEANUP => $ENV{TEST_TTSERVE_PRESERVE} ? undef : 1,
@@ -44,7 +45,9 @@ sub new {
     for (keys %$self) {
         $args{$_} = delete $self->{$_} unless exists $Defaults{$_};
     }
-    $args{'pid'} = $self->{'base_dir'} . '/tmp/pid';
+    $args{'pid'}    = $self->{'base_dir'} . '/tmp/pid';
+    $args{'host'} ||= $self->host;
+    $args{'port'} ||= $self->port;
     $self->{'args'} = \%args;
 
     $self->{'dbname'} = $dbname ? $self->{'base_dir'} .'/tmp/'. $dbname : '';
@@ -122,8 +125,8 @@ sub stop {
 }
 
 sub socket    { ($_[0]->host, $_[0]->port) }
-sub host      { shift->{'args'}{'host'} || 'localhost' }
-sub port      { shift->{'args'}{'port'} || 1978 }
+sub host      { shift->{'args'}{'host'} || '127.0.0.1' }
+sub port      { shift->{'args'}{'port'} || empty_port  }
 sub pid       { shift->{'child'}         }
 sub is_up     { shift->{'child'} ? 1 : 0 }
 sub is_down   { shift->is_up ? 0 : 1     }

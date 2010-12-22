@@ -9,12 +9,11 @@ my $ttserver = Test::ttserver->new(undef,
     port   => $port,
 ) or plan 'skip_all' => $Test::ttserver::errstr;
 
-plan 'tests' => 5;
+plan 'tests' => 6;
 
 ok( $ttserver, 'bind on port ' . $port );
 
 my @ttserver = map {
-    1;
     my $ttserver = Test::ttserver->new(undef, 
         port  => $port + $_,
     );
@@ -24,3 +23,8 @@ my @ttserver = map {
 
 cmp_ok( @ttserver, '==', 3, 'multi instance' );
 
+is_deeply(
+    [ map $_->port, @ttserver ],
+    [qw(101977 101978 101979)],
+    'port number'
+);
