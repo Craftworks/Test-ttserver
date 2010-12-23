@@ -10,7 +10,7 @@ use POSIX qw/SIGTERM WNOHANG :sys_wait_h/;
 use Time::HiRes 'sleep';
 use Test::TCP;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 $VERSION = eval $VERSION;
 
 our $errstr;
