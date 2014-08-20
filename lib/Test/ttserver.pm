@@ -115,6 +115,7 @@ sub start {
 
 sub stop {
     my ( $self, $sig ) = @_;
+    local $?; # waitpid may change this value :/
     return unless defined $self->pid;
     $sig ||= SIGTERM;
     kill $sig, $self->pid;
