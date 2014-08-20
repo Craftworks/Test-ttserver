@@ -21,6 +21,7 @@ our %Defaults    = (
     auto_start => 1,
     base_dir   => undef,
     bin        => undef,
+    _owner_pid => undef,
 );
 
 sub new {
@@ -28,6 +29,7 @@ sub new {
     my $dbname = shift || '';
     my $self = bless +{
         %Defaults,
+        _owner_pid => $$,
         @_ == 1 ? %{$_[0]} : @_,
     }, $class;
 
@@ -62,7 +64,7 @@ sub new {
 
 sub DESTROY {
     my $self = shift;
-    $self->stop if defined $self->pid;
+    $self->stop if defined $self->pid && $self->{_owner_pid} == $$;
 }
 
 sub setup {
